@@ -1,0 +1,24 @@
+WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING 
+
+This code requires significant fiddling inside of the Arduino distribution to
+free up enough RAM to run without crashing.
+
+1) Shrink the I2C twi BUFFER_SIZE from 32 to 8 in the following file:
+[Arduino Path]/Resources/Java/libraries/Wire/utility/twi.h 
+
+2) Shrink the I2C Wire BUFFER_LENGTH from 32 to 8 in the following file:
+[Arduino Path]/Resources/Java/libraries/Wire/Wire.h
+
+3) Shrink the Hardware Serial buffers from 16 to 4 in the following file:
+[Arduino Path]/Resources/Java/hardware/arduino/cores/arduino/HardwareSerial.cpp
+41c41
+<   #define SERIAL_BUFFER_SIZE 4
+---
+>   #define SERIAL_BUFFER_SIZE 16
+43c43
+<   #define SERIAL_BUFFER_SIZE 4
+---
+>   #define SERIAL_BUFFER_SIZE 64
+
+None of this has an appreciable impact on the running of the LifeBoard binary, but
+they might affect other more demanding projects.
