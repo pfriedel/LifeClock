@@ -32,101 +32,7 @@ void setup() {
 }
 
 void loop() {
-
-//  for(int x = 4; x<=7; x++) { 
-//    Serial.print(x-3); Serial.print(" ");
-//    Serial.print(x-2); Serial.print(" ");
-//    Serial.print(x-1); Serial.print(" ");
-//    Serial.print(x); Serial.print(" ");
-//    Serial.print(x+1); Serial.print(" ");
-//    Serial.print(x+2); Serial.print(" ");
-//    Serial.print(x+3); Serial.print(" ");
-//    Serial.println();
-//
-//    LedSign::drawLine(0, 0, 9, 9,x);
-//    LedSign::drawLine(0, 1, 9,10,x+1);
-//    LedSign::drawLine(0, 2, 8,10,x+2);
-//    LedSign::drawLine(0, 3, 7,10,x+3);
-//    LedSign::drawLine(0, 4, 6,10,x+2);
-//    LedSign::drawLine(0, 5, 5,10,x+1);
-//    LedSign::drawLine(0, 6, 4,10,x);
-//    LedSign::drawLine(0, 7, 3,10,x-1);
-//    LedSign::drawLine(0, 8, 2,10,x-2);
-//    LedSign::drawLine(0, 9, 1,10,x-3);
-//    LedSign::Set(0,10,x-2);
-//    LedSign::drawLine(1,0,9,8,x-1);
-//    LedSign::drawLine(2,0,9,7,x-2);
-//    LedSign::drawLine(3,0,9,6,x-3);
-//    LedSign::drawLine(4,0,9,5,x-2);
-//    LedSign::drawLine(5,0,9,4,x-1);
-//    LedSign::drawLine(6,0,9,3,x);
-//    LedSign::drawLine(7,0,9,2,x+1);
-//    LedSign::drawLine(8,0,9,1,x+2);
-//    LedSign::Set(9,0,x+3);
-//    delay(50);
-//  }
-//  for(int x = 7; x>=4; x--) {
-//    Serial.print(x-3); Serial.print(" ");
-//    Serial.print(x-2); Serial.print(" ");
-//    Serial.print(x-1); Serial.print(" ");
-//    Serial.print(x); Serial.print(" ");
-//    Serial.print(x+1); Serial.print(" ");
-//    Serial.print(x+2); Serial.print(" ");
-//    Serial.print(x+3); Serial.print(" ");
-//    Serial.println();
-//
-//    LedSign::drawLine(0, 0, 9, 9,x);
-//    LedSign::drawLine(0, 1, 9,10,x+1);
-//    LedSign::drawLine(0, 2, 8,10,x+2);
-//    LedSign::drawLine(0, 3, 7,10,x+3);
-//    LedSign::drawLine(0, 4, 6,10,x+2);
-//    LedSign::drawLine(0, 5, 5,10,x+1);
-//    LedSign::drawLine(0, 6, 4,10,x);
-//    LedSign::drawLine(0, 7, 3,10,x-1);
-//    LedSign::drawLine(0, 8, 2,10,x-2);
-//    LedSign::drawLine(0, 9, 1,10,x-3);
-//    LedSign::Set(0,10,x-2);
-//    LedSign::drawLine(1,0,9,8,x-1);
-//    LedSign::drawLine(2,0,9,7,x-2);
-//    LedSign::drawLine(3,0,9,6,x-3);
-//    LedSign::drawLine(4,0,9,5,x-2);
-//    LedSign::drawLine(5,0,9,4,x-1);
-//    LedSign::drawLine(6,0,9,3,x);
-//    LedSign::drawLine(7,0,9,2,x+1);
-//    LedSign::drawLine(8,0,9,1,x+2);
-//    LedSign::Set(9,0,x+3);
-//    delay(50);
-//  }
-
-  int counter = 6;
-  int direction = 1;
-  while(1) {
-    int internal = counter%8;
-
-    Serial.println(counter);
-    Serial.println(internal);
-    LedSign::Horizontal( 0,(internal+0));
-    LedSign::Horizontal( 1,(internal+1));
-    LedSign::Horizontal( 2,(internal+2));
-    LedSign::Horizontal( 3,(internal+3));
-    LedSign::Horizontal( 4,(internal+4));
-    LedSign::Horizontal( 5,(internal+5));
-    LedSign::Horizontal( 6,(internal+4));
-    LedSign::Horizontal( 7,(internal+3));
-    LedSign::Horizontal( 8,(internal+2));
-    LedSign::Horizontal( 9,(internal+1));
-    LedSign::Horizontal(10,(internal+0));
-    delay(100);
-
-    //    if((counter == 7) || (counter == 0)) { direction = !direction; }
-
-    if(direction == 1) {
-      counter++;
-    }
-    else {
-      counter--;
-    }
-  }
+  Particles();
 }
 
 //--------------------------------------------------------------------------------
@@ -222,3 +128,93 @@ uint8_t Font_Draw(unsigned char letter,int x,int y,int set) {
   return maxx+2; // return the rightmost column + 2 for spacing.
 }
 
+
+void Particles() {
+  const int numparticles = 2;
+
+  long p_framecount = 0;
+
+  int velx[numparticles];
+  int vely[numparticles];
+  int posx[numparticles];
+  int posy[numparticles];
+
+  // How big do you want the virtual particle space to be?  Higher resolution
+  // means slower but more precise particles (without shortening the delay)
+  int res = 7;
+
+  // And how big is the display space? (actual pixels, not off-by-one)
+  #define DISPLAY_X 10
+  #define DISPLAY_Y 11
+
+  int max_x = DISPLAY_X<<res;
+  int max_y = DISPLAY_Y<<res;
+
+  int maxspeed = 30;
+
+  int row, col, i;
+
+  for(i = 0; i<numparticles; i++) {
+    velx[i] = random(11)+5;
+    vely[i] = random(11)+5;
+    posx[i] = (i%2)<<res;
+    posy[i] = (i/2)<<res;
+  }
+
+  while(1) {
+    p_framecount++;
+    LedSign::Clear();
+
+    // This only really works for particles % 2 = 0
+    // Draw the Qix for each pair of particles
+    for( i = 0; i < numparticles; i = i+2) {
+      LedSign::drawLine(posx[i]>>res, posy[i]>>res, posx[i+1]>>res, posy[i+1]>>res,7);
+    }
+
+    // Update the location of the particles for the next frame.
+    for( i = 0; i<numparticles; i++) {
+
+      // The new positions are the old positions plus the velocity in the correct axis.
+      posx[i]+=velx[i];
+      posy[i]+=vely[i];
+
+      // If the x position will go below 0
+      if(posx[i] < 0) {
+        posx[i] = 1; // the new x position is 1;
+        velx[i] = -velx[i]; // The velocity on the x axis inverts (boing!)
+        vely[i] = vely[i]+random(-1,1); // The velocity on the y axis gets a small random change.
+
+        if(vely[i]>maxspeed) vely[i] = maxspeed; // if the new y velocity is too fast, pin it to the maximum speed.
+        else if(vely[i]<-maxspeed) vely[i] = -maxspeed;
+      }
+
+      else if(posx[i]>=max_x) {
+        posx[i] = max_x+(max_x-posx[i]);
+        velx[i] = -velx[i];
+        vely[i] = vely[i]+random(-1,1);
+
+        if(vely[i]>maxspeed) vely[i] = maxspeed;
+        else if(vely[i]<-maxspeed) vely[i] = -maxspeed;
+      }
+
+      if(posy[i]<0) {
+        posy[i] = 1;
+        vely[i] = -vely[i];
+	velx[i] = velx[i]+random(-1,1);
+
+        if(velx[i]>maxspeed) velx[i] = maxspeed;
+        else if(velx[i]<-maxspeed) velx[i] = -maxspeed;
+      }
+      else if(posy[i]>=max_y) {
+        posy[i] = max_y+(max_y-posy[i]);
+        vely[i] = -vely[i];
+        velx[i] = velx[i]+random(-1,1);
+
+        if(velx[i]>maxspeed) velx[i] = maxspeed;
+        else if(velx[i]<-maxspeed) velx[i] = -maxspeed;
+      }
+
+    }
+    delay(5);
+  }
+}
