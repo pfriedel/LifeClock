@@ -11,7 +11,7 @@ free up enough RAM to run without crashing.
 2) Shrink the I2C Wire BUFFER_LENGTH from 32 to 8 in the following file:
 [Arduino Path]/Resources/Java/libraries/Wire/Wire.h
 
-3) Shrink the Hardware Serial buffers from 16 to 4 in the following file:
+3) Shrink the Hardware Serial buffers from 16/64 to 4 in the following file:
 [Arduino Path]/Resources/Java/hardware/arduino/cores/arduino/HardwareSerial.cpp
 41c41
 <   #define SERIAL_BUFFER_SIZE 4
