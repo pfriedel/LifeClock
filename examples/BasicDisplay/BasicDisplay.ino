@@ -27,7 +27,7 @@ void setup() {
 
   // Initialize the screen  
   LedSign::Init(GRAYSCALE);
-  LedSign::SetBrightness(31);
+  //  LedSign::SetBrightness(31);
 
 }
 
@@ -138,10 +138,10 @@ void Particles() {
   int vely[numparticles];
   int posx[numparticles];
   int posy[numparticles];
-
+    
   // How big do you want the virtual particle space to be?  Higher resolution
   // means slower but more precise particles (without shortening the delay)
-  int res = 7;
+  int res = 6;
 
   // And how big is the display space? (actual pixels, not off-by-one)
   #define DISPLAY_X 10
@@ -163,13 +163,27 @@ void Particles() {
 
   while(1) {
     p_framecount++;
-    LedSign::Clear();
 
-    // This only really works for particles % 2 = 0
-    // Draw the Qix for each pair of particles
-    for( i = 0; i < numparticles; i = i+2) {
-      LedSign::drawLine(posx[i]>>res, posy[i]>>res, posx[i+1]>>res, posy[i+1]>>res,7);
-    }
+    // there's a flicker here because the matrix often has the same data in it,
+    // and at a slow enough speed it comes out as a flicker.
+    
+    // res 6 and delay 2 is fairly bearable at max brightness.  Slower than that
+    // and the flicker starts to get worse.  I probably need to import the draw_frame
+    // and fade_to_next_frame routines if I want to slow it down beyond that, or
+    // re-enable the LedSign framebuffer.
+
+    LedSign::Clear(0);
+
+    // Draw it as a Qix Demon
+    LedSign::drawLine(constrain((posx[0]>>res),0,DISPLAY_X-1),
+		      constrain((posy[0]>>res),0,DISPLAY_Y-1), 
+		      constrain((posx[1]>>res),0,DISPLAY_X-1), 
+		      constrain((posy[1]>>res),0,DISPLAY_Y-1),
+		      7);
+    
+    // draw the particles as 2 distinct blobs.
+//    LedSign::Set(constrain((posx[0]>>res),0,DISPLAY_X-1),constrain((posy[0]>>res),0,DISPLAY_Y-1),7);
+//    LedSign::Set(constrain((posx[1]>>res),0,DISPLAY_X-1),constrain((posy[1]>>res),0,DISPLAY_Y-1),7);
 
     // Update the location of the particles for the next frame.
     for( i = 0; i<numparticles; i++) {
@@ -188,7 +202,7 @@ void Particles() {
         else if(vely[i]<-maxspeed) vely[i] = -maxspeed;
       }
 
-      else if(posx[i]>=max_x) {
+      else if(posx[i]>max_x) {
         posx[i] = max_x+(max_x-posx[i]);
         velx[i] = -velx[i];
         vely[i] = vely[i]+random(-1,1);
@@ -205,7 +219,7 @@ void Particles() {
         if(velx[i]>maxspeed) velx[i] = maxspeed;
         else if(velx[i]<-maxspeed) velx[i] = -maxspeed;
       }
-      else if(posy[i]>=max_y) {
+      else if(posy[i]>max_y) {
         posy[i] = max_y+(max_y-posy[i]);
         vely[i] = -vely[i];
         velx[i] = velx[i]+random(-1,1);
@@ -215,6 +229,6 @@ void Particles() {
       }
 
     }
-    delay(5);
+    delay(2);
   }
 }
