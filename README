@@ -27,3 +27,7 @@ http://timewitharduino.blogspot.com/2012/01/mixiclock-4-digits-displayed-on-8x8-
 http://b2ben.blogspot.com/search/label/TinyChuck5
 
 (insert standard GPL license here - enjoy!)
+
+If you want to see the historical stripboard version of this code and all the
+fumbling around, it's in a different repository:
+https://github.com/pfriedel/OneTenClock/
